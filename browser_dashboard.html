@@ -1,0 +1,170 @@
+<!--
+README:
+Browser Environment Dashboard
+This project demonstrates the use of JavaScript Browser Objects:
+- navigator
+- screen
+- document
+- location
+- history
+- window
+
+Features:
+• Displays browser and screen information
+• Shows current page details
+• Allows dynamic title change
+• Navigation controls (reload, redirect, back, forward)
+• Dynamic background color based on screen width
+• Responsive design
+All CSS and JavaScript are embedded in this single file.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browser Environment Dashboard</title>
+
+<style>
+    body{
+        font-family: Arial, sans-serif;
+        margin:0;
+        padding:0;
+        transition: background-color 0.4s ease;
+    }
+
+    .header{
+        background:#222;
+        color:white;
+        padding:20px;
+        text-align:center;
+    }
+
+    .section{
+        padding:20px;
+        margin:20px;
+        background:white;
+        border-radius:8px;
+        box-shadow:0 0 10px rgba(0,0,0,0.1);
+    }
+
+    button{
+        padding:8px 12px;
+        margin:5px;
+        cursor:pointer;
+    }
+</style>
+</head>
+
+<body onload="updateBackgroundColor()" onresize="updateBackgroundColor()">
+
+<!-- Part 0: Profile Section -->
+<div class="header">
+    <h2>Student Profile</h2>
+    <p><strong>Name:</strong> Brian V. Bantog</p>
+    <p><strong>Sex:</strong> Male</p>
+    <p><strong>Address:</strong> Zone 7, Guyavano Street, Tominawog, San Jose, Camarines Sur</p>
+    <p><strong>Course/Year/Section:</strong> BSIT - 2D</p>
+    <p><strong>School:</strong> Partido State University</p>
+    <p><strong>Semester/AY:</strong> 2nd Semester AY 2025–2026</p>
+    <p><strong>Subject:</strong> Browser Environment Dashboard Activity</p>
+    <p><strong>Instructor:</strong> (Add Your Instructor Name Here)</p>
+</div>
+
+<!-- Part A: Browser Information -->
+<div class="section">
+    <h3>Browser Information</h3>
+    <p><strong>Browser:</strong> <span id="browserInfo"></span></p>
+    <p><strong>Platform:</strong> <span id="platformInfo"></span></p>
+    <p><strong>Java Enabled:</strong> <span id="javaInfo"></span></p>
+    <p><strong>Screen Resolution:</strong> <span id="screenRes"></span></p>
+    <p><strong>Available Screen Size:</strong> <span id="availableScreen"></span></p>
+    <p><strong>Color Depth:</strong> <span id="colorDepth"></span></p>
+</div>
+
+<!-- Part B: Page Information -->
+<div class="section">
+    <h3>Page Information</h3>
+    <p><strong>Current URL:</strong> <span id="currentURL"></span></p>
+    <p><strong>Hostname:</strong> <span id="hostname"></span></p>
+    <p><strong>Page Title:</strong> <span id="pageTitle"></span></p>
+
+    <button onclick="changeTitle()">Change Title</button>
+</div>
+
+<!-- Part C: Navigation Controls -->
+<div class="section">
+    <h3>Navigation Controls</h3>
+    <button onclick="location.reload()">Reload Page</button>
+    <button onclick="redirectPage()">Redirect to Example</button>
+    <button onclick="history.back()">Back</button>
+    <button onclick="history.forward()">Forward</button>
+</div>
+
+<script>
+    // Display Browser Information
+    document.getElementById("browserInfo").textContent =
+        navigator.appName + " - " + navigator.appVersion;
+
+    document.getElementById("platformInfo").textContent =
+        navigator.platform;
+
+    document.getElementById("javaInfo").textContent =
+        navigator.javaEnabled();
+
+    document.getElementById("screenRes").textContent =
+        screen.width + " x " + screen.height;
+
+    document.getElementById("availableScreen").textContent =
+        screen.availWidth + " x " + screen.availHeight;
+
+    document.getElementById("colorDepth").textContent =
+        screen.colorDepth;
+
+    // Display Page Information
+    function updatePageInfo(){
+        document.getElementById("currentURL").textContent =
+            location.href;
+
+        document.getElementById("hostname").textContent =
+            location.hostname;
+
+        document.getElementById("pageTitle").textContent =
+            document.title;
+    }
+
+    updatePageInfo();
+
+    // Change Page Title
+    function changeTitle(){
+        let newTitle = prompt("Enter new page title:");
+        if(newTitle){
+            document.title = newTitle;
+            updatePageInfo();
+        }
+    }
+
+    // Redirect Function
+    function redirectPage(){
+        location.href = "https://www.example.com";
+    }
+
+    // Dynamic Background Color Based on Screen Width
+    function updateBackgroundColor(){
+        let width = window.innerWidth;
+
+        if(width < 600){
+            document.body.style.backgroundColor = "blue";
+        }
+        else if(width >= 600 && width <= 991){
+            document.body.style.backgroundColor = "green";
+        }
+        else{
+            document.body.style.backgroundColor = "orange";
+        }
+    }
+</script>
+
+</body>
+</html>
