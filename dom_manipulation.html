@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Profile</title>
+
+<style>
+body {
+  font-family: Arial;
+  padding:20px;
+  background: #444444;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  color:white;
+}
+
+.container {
+  width: 900px;
+  display:flex;
+  gap:30px;
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.left, .right {
+  flex:1;
+}
+
+.section-box {
+  border: 2px solid black;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 15px;
+  background: #d3d3d3;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+}
+
+img {
+  width:150px;
+  height:150px;
+  border-radius:50%;
+  cursor:pointer;
+  border: 4px solid green;
+  display:block;
+  margin:auto;
+}
+
+h1, h2 {
+  color: green;
+  text-align:center;
+  font-size: 18px;
+}
+
+p {
+  color:black;
+  text-align:center;
+}
+
+.selected { background: lightgreen; }
+
+li {
+  cursor:pointer;
+  padding:5px;
+  border-radius:5px;
+  color:black;
+}
+
+li:hover { background:#d0ffd0; }
+
+button {
+  margin:5px;
+  padding:8px 12px;
+  border:none;
+  border-radius:8px;
+  background:green;
+  color:white;
+  cursor:pointer;
+}
+
+button:hover {
+  background:darkgreen;
+}
+
+ul {
+  list-style:none;
+  padding:0;
+}
+
+input {
+  padding:8px;
+  margin:5px;
+  border-radius:8px;
+  border:1px solid green;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="left">
+
+<div class="section-box">
+<h2>Profile Picture</h2>
+<img id="profilePic" src="https://via.placeholder.com/150">
+<input type="file" id="fileInput" hidden>
+</div>
+
+<div class="section-box">
+<h2>Your Name</h2>
+<h1 id="name">Your Name</h1>
+<button onclick="editText('name')">Edit Name</button>
+</div>
+
+<div class="section-box">
+<h2>Bio</h2>
+<p id="bio">Your bio here...</p>
+<button onclick="editText('bio')">Edit Bio</button>
+</div>
+
+</div>
+
+<div class="right">
+
+<div class="section-box">
+<h2>Skills</h2>
+<ul id="skills">
+<li draggable="true">HTML</li>
+<li draggable="true">CSS</li>
+<li draggable="true">JavaScript</li>
+</ul>
+<button onclick="addItem('skills')">Add Skill</button>
+<button onclick="deleteSelected('skills')">Delete Skill</button>
+</div>
+
+<div class="section-box">
+<h2>Hobbies</h2>
+<ul id="hobbies">
+<li draggable="true">Gaming</li>
+<li draggable="true">Reading</li>
+<li draggable="true">Music</li>
+</ul>
+<button onclick="addItem('hobbies')">Add Hobby</button>
+<button onclick="deleteSelected('hobbies')">Delete Hobby</button>
+</div>
+
+<div class="section-box">
+<h2>Education</h2>
+<div id="education" style="color:black; text-align:center;">
+<p contenteditable="true">School: Your School</p>
+<p contenteditable="true">Course: Your Course</p>
+<p contenteditable="true">Year: 2026</p>
+</div>
+</div>
+
+<button onclick="saveData()">Save</button>
+<button onclick="resetData()">Reset</button>
+
+</div>
+
+</div>
+
+<script>
+const profilePic = document.getElementById('profilePic');
+const fileInput = document.getElementById('fileInput');
+
+profilePic.onclick = () => fileInput.click();
+fileInput.onchange = (e) => {
+  const file = e.target.files[0];
+  if(file){
+    profilePic.src = URL.createObjectURL(file);
+    console.log('Profile picture updated');
+    saveData();
+  }
+};
+
+function editText(id){
+  const el = document.getElementById(id);
+  const input = document.createElement('input');
+  input.value = el.innerText;
+  el.replaceWith(input);
+  input.focus();
+
+  input.onblur = save;
+  input.onkeypress = (e)=>{ if(e.key==='Enter') save(); };
+
+  function save(){
+    const newEl = document.createElement(el.tagName);
+    newEl.id = id;
+    newEl.innerText = input.value;
+    input.replaceWith(newEl);
+    console.log(id + ' edited');
+    saveData();
+  }
+}
+
+function addItem(listId){
+  const ul = document.getElementById(listId);
+  const input = document.createElement('input');
+  ul.after(input);
+  input.focus();
+
+  input.onkeypress = (e)=>{
+    if(e.key==='Enter'){
+      const li = document.createElement('li');
+      li.innerText = input.value;
+      li.draggable = true;
+      addEvents(li, listId);
+      ul.appendChild(li);
+      console.log(listId + ' added: ' + input.value);
+      input.remove();
+      saveData();
+    }
+  }
+}
+
+function deleteSelected(listId){
+  const ul = document.getElementById(listId);
+  const selected = ul.querySelectorAll('.selected');
+  selected.forEach(li=> li.remove());
+  console.log(listId + ' deleted');
+  saveData();
+}
+
+function addEvents(li, type){
+  li.onclick = ()=>{
+    li.classList.toggle('selected');
+    console.log(type + ' selected');
+  };
+
+  li.ondragstart = (e)=>{
+    e.dataTransfer.setData('text/plain', li.innerText);
+    window.dragged = li;
+  };
+
+  li.ondragover = (e)=> e.preventDefault();
+
+  li.ondrop = (e)=>{
+    e.preventDefault();
+    const target = li;
+    target.parentNode.insertBefore(window.dragged, target);
+    console.log(type + ' reordered');
+    saveData();
+  };
+}
+
+document.querySelectorAll('li').forEach(li=>{
+  const parent = li.parentElement.id;
+  addEvents(li, parent);
+});
+
+function saveData(){
+  const data = {
+    name: document.getElementById('name')?.innerText,
+    bio: document.getElementById('bio')?.innerText,
+    skills: [...document.querySelectorAll('#skills li')].map(li=>li.innerText),
+    hobbies: [...document.querySelectorAll('#hobbies li')].map(li=>li.innerText),
+    pic: profilePic.src
+  };
+  localStorage.setItem('profileData', JSON.stringify(data));
+}
+
+function loadData(){
+  const data = JSON.parse(localStorage.getItem('profileData'));
+  if(!data) return;
+
+  document.getElementById('name').innerText = data.name;
+  document.getElementById('bio').innerText = data.bio;
+  profilePic.src = data.pic;
+
+  ['skills','hobbies'].forEach(id=>{
+    const ul = document.getElementById(id);
+    ul.innerHTML='';
+    data[id].forEach(item=>{
+      const li=document.createElement('li');
+      li.innerText=item;
+      li.draggable=true;
+      addEvents(li,id);
+      ul.appendChild(li);
+    });
+  });
+}
+
+function resetData(){
+  localStorage.clear();
+  location.reload();
+}
+
+loadData();
+</script>
+
+</body>
+</html>
