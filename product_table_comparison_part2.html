@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Table Loader</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(to bottom right, #4ae635, #616161);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    width: 80%;
+    max-width: 900px;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  }
+
+  button {
+    margin: 6px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #3db92d;
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+  }
+
+  button:hover {
+    background-color: #32c025;
+  }
+
+  input {
+    padding: 8px;
+    margin: 5px;
+    border-radius: 6px;
+    border: 1px solid #707070;
+  }
+
+  .button-row {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th, td {
+    border: 1px solid #333;
+    padding: 10px;
+  }
+
+  th {
+    background: #f1f1f1;
+  }
+
+  #message {
+    margin-top: 10px;
+    font-weight: bold;
+    color: red;
+  }
+
+  #tableContainer {
+    margin-top: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  #bottomControls {
+    margin-top: 15px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>Product Table Loader Part 2</h1>
+
+  <div>
+    <input type="text" id="name" placeholder="Product Name">
+    <input type="number" id="price" placeholder="Price">
+    <input type="text" id="category" placeholder="Category">
+  </div>
+
+  <div class="button-row">
+    <button onclick="addProduct()">Add Product</button>
+    <button onclick="loadWithInnerHTML()">Load innerHTML</button>
+    <button onclick="loadWithDOM()">Load DOM</button>
+    <button onclick="testInnerHTML()">Test innerHTML</button>
+    <button onclick="testDOM()">Test DOM</button>
+  </div>
+
+  <div id="message"></div>
+  <div id="tableContainer"></div>
+  <div id="bottomControls"></div>
+</div>
+
+<script>
+let products = [
+  { name: "Laptop", price: "₱15,000", category: "Electronics" },
+  { name: "Shoes", price: "₱150", category: "Fashion" },
+  { name: "Watch", price: "₱160", category: "Accessories" },
+  { name: "Phone", price: "₱10,000", category: "Electronics" },
+  { name: "Backpack", price: "₱120", category: "Bags" }
+];
+
+let lastMethod = "innerHTML";
+
+function showMethod(method) {
+  document.getElementById("message").textContent = "Method: " + method;
+}
+
+function addProduct() {
+  const name = document.getElementById("name").value.trim();
+  let price = document.getElementById("price").value.trim();
+  const category = document.getElementById("category").value.trim();
+  const message = document.getElementById("message");
+
+  if (!name || !price || !category) {
+    message.textContent = "Please complete all fields.";
+    return;
+  }
+
+  if (isNaN(price)) {
+    message.textContent = "Price must be numeric.";
+    return;
+  }
+
+  price = "₱" + Number(price).toLocaleString();
+  products.push({ name, price, category });
+
+  document.getElementById("name").value = "";
+  document.getElementById("price").value = "";
+  document.getElementById("category").value = "";
+  message.textContent = "";
+
+  lastMethod === "innerHTML" ? loadWithInnerHTML() : loadWithDOM();
+}
+
+function deleteProduct(index) {
+  products.splice(index, 1);
+  lastMethod === "innerHTML" ? loadWithInnerHTML() : loadWithDOM();
+}
+
+function removeTestRow(index) {
+  const row = document.getElementById("row-" + index);
+  if (row) row.remove();
+}
+
+function showClearButton() {
+  document.getElementById("bottomControls").innerHTML =
+    `<button onclick="clearTable()">Clear Table</button>`;
+}
+
+function clearTable() {
+  document.getElementById("tableContainer").innerHTML = "";
+  document.getElementById("bottomControls").innerHTML = "";
+  document.getElementById("message").textContent = "";
+}
+
+function loadWithInnerHTML() {
+  lastMethod = "innerHTML";
+  showMethod("Load innerHTML");
+
+  let html = "<table><tr><th>Name</th><th>Price</th><th>Category</th><th>Action</th></tr>";
+
+  products.forEach((p, i) => {
+    html += `
+      <tr>
+        <td>${p.name}</td>
+        <td>${p.price}</td>
+        <td>${p.category}</td>
+        <td><button onclick="deleteProduct(${i})">Delete</button></td>
+      </tr>
+    `;
+  });
+
+  html += "</table>";
+  document.getElementById("tableContainer").innerHTML = html;
+  showClearButton();
+}
+
+function loadWithDOM() {
+  lastMethod = "DOM";
+  showMethod("Load DOM");
+
+  const container = document.getElementById("tableContainer");
+  container.innerHTML = "";
+
+  const table = document.createElement("table");
+
+  const header = document.createElement("tr");
+  ["Name", "Price", "Category", "Action"].forEach(t => {
+    const th = document.createElement("th");
+    th.textContent = t;
+    header.appendChild(th);
+  });
+
+  table.appendChild(header);
+
+  products.forEach((p, i) => {
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${p.name}</td>
+      <td>${p.price}</td>
+      <td>${p.category}</td>
+    `;
+
+    const action = document.createElement("td");
+    const btn = document.createElement("button");
+    btn.textContent = "Delete";
+    btn.onclick = () => deleteProduct(i);
+
+    action.appendChild(btn);
+    row.appendChild(action);
+    table.appendChild(row);
+  });
+
+  container.appendChild(table);
+  showClearButton();
+}
+
+function generateManyProducts(count) {
+  let data = [];
+  for (let i = 1; i <= count; i++) {
+    data.push({
+      name: "Product " + i,
+      price: Math.floor(Math.random() * 100),
+      category: "Category " + (i % 5 + 1)
+    });
+  }
+  return data;
+}
+
+function testInnerHTML() {
+  lastMethod = "innerHTML";
+  showMethod("Test innerHTML");
+
+  let testData = generateManyProducts(100);
+
+  console.time("innerHTML");
+
+  let html = "<table><tr><th>Name</th><th>Price</th><th>Category</th><th>Action</th></tr>";
+
+  testData.forEach((p, i) => {
+    html += `
+      <tr id="row-${i}">
+        <td>${p.name}</td>
+        <td>₱${Number(p.price).toLocaleString()}</td>
+        <td>${p.category}</td>
+        <td><button onclick="removeTestRow(${i})">Delete</button></td>
+      </tr>
+    `;
+  });
+
+  html += "</table>";
+
+  document.getElementById("tableContainer").innerHTML = html;
+
+  console.timeEnd("innerHTML");
+
+  showClearButton();
+}
+
+function testDOM() {
+  lastMethod = "DOM";
+  showMethod("Test DOM");
+
+  let testData = generateManyProducts(100);
+
+  console.time("DOM");
+
+  const container = document.getElementById("tableContainer");
+  container.innerHTML = "";
+
+  const table = document.createElement("table");
+
+  const header = document.createElement("tr");
+  ["Name", "Price", "Category", "Action"].forEach(t => {
+    const th = document.createElement("th");
+    th.textContent = t;
+    header.appendChild(th);
+  });
+
+  table.appendChild(header);
+
+  testData.forEach((p, i) => {
+    const row = document.createElement("tr");
+    row.id = "row-" + i;
+
+    const td1 = document.createElement("td");
+    td1.textContent = p.name;
+
+    const td2 = document.createElement("td");
+    td2.textContent = "₱" + Number(p.price).toLocaleString();
+
+    const td3 = document.createElement("td");
+    td3.textContent = p.category;
+
+    const action = document.createElement("td");
+    const btn = document.createElement("button");
+    btn.textContent = "Delete";
+    btn.onclick = () => removeTestRow(i);
+
+    action.appendChild(btn);
+
+    row.appendChild(td1);
+    row.appendChild(td2);
+    row.appendChild(td3);
+    row.appendChild(action);
+
+    table.appendChild(row);
+  });
+
+  container.appendChild(table);
+
+  console.timeEnd("DOM");
+
+  showClearButton();
+}
+</script>
+
+</body>
+</html>
