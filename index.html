@@ -3,67 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Homepage</title>
-
-<style>
-    body{
-        font-family: Arial, sans-serif;
-        margin:40px;
-    }
-
-    .profile{
-        background:#f4f4f4;
-        padding:20px;
-        border-radius:8px;
-    }
-
-    a{
-        display:block;
-        margin:10px 0;
-        font-size:18px;
-    }
-</style>
+<title>Canvas Circle Editor</title>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div class="profile">
-    <h2>Student Profile</h2>
-    <p><strong>Name:</strong> Brian V. Bantog</p>
-    <p><strong>Sex:</strong> Male</p>
-    <p><strong>Address:</strong> Zone 7, Guyavano Street, Tominawog, San Jose, Camarines Sur</p>
-    <p><strong>Course/Year/Section:</strong> BSIT - 2D</p>
-    <p><strong>School:</strong> Partido State University</p>
-    <p><strong>Semester/AY:</strong> 2nd Semester AY 2025–2026</p>
-    <p><strong>Course Code & Title:</strong> PF2 – Event Driven Programming</p>
-    <p><strong>Instructor:</strong> Arjay F. Abio</p>
+<!-- HEADER SECTION -->
+<header>
+  <h2>Interactive Canvas Shape Editor</h2>
+  <p><strong>Name:</strong> Brian V. Bantog</p>
+  <p><strong>Sex:</strong> Male</p>
+  <p><strong>Address:</strong> Zone 7, Tominawog, San Jose, Camarines Sur </p>
+  <p><strong>Course/Year/Section:</strong> BSIT 2D</p>
+  <p><strong>School:</strong> Partido State University</p>
+  <p><strong>Semester & AY:</strong> 2nd Semester, AY 2025-2026</p>
+  <p><strong>Subject:</strong> PF2 - Event Driven Programming</p>
+  <p><strong>Instructor:</strong> Arjay F. Abio</p>
+</header>
+
+<!-- CANVAS -->
+<div class="canvas-container">
+  <canvas id="canvas" width="600" height="400"></canvas>
 </div>
 
-<h3>Activity Links</h3>
-
-<a href="https://brianbantog.github.io/Who-s-that-pokemon/" target="_blank">
-1. Guess the Secret Word Game
-</a>
-
-<a href="browserDashboard.html">
-2. Browser Environment Dashboard
-</a>
-
-<a href="dom_traversal.html">
-3. DOM Traversal
-</a>   
-
-<a href="dom_manipulation.html">
-4. DOM Manipulation
-</a>
-
-<a href="product_table_comparison_part1.html">
-5. Product Table Comparison Part 1
-</a>    
-
-<a href="product_table_comparison_part2.html">
-6. Product Table Comparison Part 2
-</a> 
-    
+<script src="script.js"></script>
 </body>
 </html>
